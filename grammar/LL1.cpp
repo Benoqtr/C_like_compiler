@@ -182,7 +182,7 @@ void LL1Parser::reduceResultStack(){
         for (auto symbolNode = resultStack.rbegin(); 
             symbolNode != resultStack.rend(); ++symbolNode) {
             if (*symbolNode == lastNon_terminalNode) {
-                resultStack.erase(symbolNode.base(), resultStack.end());  // 删除从找到的节点开始到末尾的所有节点
+                resultStack.erase(symbolNode.base(), resultStack.end());
                 break;
             }
         }

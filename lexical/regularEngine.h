@@ -1,3 +1,5 @@
+namespace regularEngine{
+
 class DFAnode {
 public:
     int id;
@@ -33,7 +35,7 @@ private:
 class DFA{
 public:
     DFA(std::string postfixRegex)
-    std::string ismatch(std::string token)
+    std::string ismatch(std::string raw_token)
 private:
     std::vector<DFAnode> nodes;
     void NFAConstruction(){};
@@ -55,3 +57,5 @@ private:
     std::shared_ptr<DFA> getDFA(std::string regularExpr)
     bool is_matched(std::string token,std::shared_ptr<DFA> DFA)
 };
+
+}

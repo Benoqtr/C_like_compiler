@@ -2,7 +2,7 @@
 
 namespace grammar{
 
-ASTConstuctor::ASTConstuctor(globalConfig config, tokensPtr tokens)
+ASTConstuctor::ASTConstuctor(compileConfig config, tokensPtr tokens)
 :config(config),tokens(tokens){}
 
 void ASTConstuctor::getASTree(){
