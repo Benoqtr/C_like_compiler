@@ -3,17 +3,20 @@
 
 namespace grammar{
 
-using globalConfig = config::Config;
+using compileConfig = compile::Config;
+using ASTRoot = compile::ASTRoot;
+using tokensPtr = compile::tokensPtr
+
 using LL1grammarInfo = LL1::LL1grammarInfo;
 
 class ASTConstuctor{
 public:
-    ASTConstuctor(globalConfig config, tokensPtr tokens);
-    std::shared_ptr<ProgramAST> getASTree();
+    ASTConstuctor(compileConfig config, tokensPtr tokens);
+    ASTRoot getASTree();
 private:
-    globalConfig config;
+    compileConfig config;
     tokensPtr tokens;
-    std::shared_ptr<ProgramAST> ASTree;
+    ASTRoot ASTree;
     void ll1construct();
 };
 

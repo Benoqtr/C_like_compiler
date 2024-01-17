@@ -6,24 +6,36 @@
 
 namespace compile{
 
+    //regular Expression and regular Grammar
+    using compileConfig = config::Config;
+
+    //token pairs
+    using tokensPtr = std::shared_ptr<std::vector<
+    std::pair<std::string,std::string>>>;
+
+    //ProgramAST pointer
+    using ASTRoot = std::shared_ptr<ProgramAST>;
+
+    //IR ostream
+    using IRstream = std::ostream;
+
+
     class Compile{
     public:
-        config::Config config;
+        compileConfig config;
 
-        std::string& sourceFilePath;
-        std::string& destinationFilePath;
+        std::string sourceFilePath;
+        std::string destinationFilePath;
 
-        std::shared_ptr<std::vector<
-        std::pair<std::string,std::string>>> tokens;
+        tokensPtr tokens;
+        ASTRoot ASTree;
+        IRstream llvmIR;
 
-        std::shared_ptr<ProgramAST> ASTree;
+        Compile(compileConfig config, const std::string& sourceFilePath,
+        const std::string& destinationFilePath);
 
-        std::ostream& llvmIR;
+        Compile(compileConfig config);
 
-        Compile(config::Config config, std::string& sourceFilePath,
-        std::string& destinationFilePath):
-        config(config),sourceFilePath(sourceFilePath),
-        destinationFilePath(destinationFilePath){}
         void initToken();
         void initAST();
         void initIR();

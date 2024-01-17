@@ -9,6 +9,7 @@ LL1grammarInfo::LL1grammarInfo(productionMapPtr productionMap)
 :productionMap(productionMap){
     initNon_terminalSet();
     initTerminalSet();
+    initStartSymbol()
 }
 
 LL1grammarInfo::initNon_terminalSet(){
@@ -30,11 +31,15 @@ LL1grammarInfo::initTerminalSet(){
     }
 }
 
+LL1grammarInfo::initStartSymbol(){
+    startSymbol = *(productionMap)[0].first;
+}
+
 LL1Constructor::LL1Constructor(
-    std::shared_ptr<LL1grammarInfo> grammarInfo, tokensPtr tokens)
+    const LL1grammarInfo& grammarInfo, tokensPtr tokens)
     :grammarInfo(grammarInfo),tokens(tokens){}
 
-std::shared_ptr<ProgramAST> LL1Constructor::getASTree(){
+ASTRoot LL1Constructor::getASTree(){
     if(!ASTree == nullptr){
         return ASTree;
     }
@@ -46,8 +51,7 @@ std::shared_ptr<ProgramAST> LL1Constructor::getASTree(){
     return ASTree;
 }
 
-void LL1Constructor::genTable(std::shared_ptr<LL1grammarInfo> 
-grammarInfo){
+void LL1Constructor::genTable(const LL1grammarInfo& grammarInfo){
     LL1TableConstructor(grammarInfo);
     LL1Table = LL1TableConstructor.getTable();
 }
@@ -145,42 +149,88 @@ bool LL1TableConstructor::tryAddNewSymbol(std::set<std::string>& dstSet,std::set
     }
 }
 
+void LL1TableConstructor::constructLL1Table(){
+
+}
+
+void LL1Parser::reduceResultStack(){
+    LL1AnalysisNode lastNon_terminalNode;
+    bool haveLastNon_terminalNode = false;
+    std::vector<LL1AnalysisNode> FinalStack;
+    //find the last Non_terminal;
+    for(auto symbolNode = resultStack.rbegin(); 
+    symbolNode != resultStack.rend(); ++symbolNode){
+        if((*symbolNode).isFinal){
+            FinalStack.push_back(*symbolNode);
+            haveLastNon_terminalNode = true;
+        } else {
+            lastNon_terminalNode = *symbolNode;
+            break;
+        }
+    }
+    if(!lastNon_terminalNode)
+        return;
+    //judge if can reduce
+    if(lastNon_terminalNode.production.size() != FinalStack.size()){
+        return;
+    }
+    //check error
+    if(lastNon_terminalNode.production == FinalStack){
+        newAnalysisNode = buildAnalysisNode_final_non_terminal(
+        lastNon_terminalNode,FinalStack);
+        //erase old
+        for (auto symbolNode = resultStack.rbegin(); 
+            symbolNode != resultStack.rend(); ++symbolNode) {
+            if (*symbolNode == lastNon_terminalNode) {
+                resultStack.erase(symbolNode.base(), resultStack.end());  // 删除从找到的节点开始到末尾的所有节点
+                break;
+            }
+        }
+        symbolNode.push_back(newAnalysisNode);
+    } else {
+        std::cerr << "lastNon_terminalNode match error"
+        <<std::endl;
+        break;
+    }
+}
+
 bool LL1Parser::parse(){
+    parseStack.push_back(buildAnalysisNode_non_terminal(startSymbol));
     while (!parsingStack.empty() && 
     parsingTokenIndex < (*tokens).size()) {
 
         std::string stackTop = parseStack.top();
+        //curToken: pair[Type,Exp]
         auto curToken = (*tokens)[parsingTokenIndex];
 
         //terminal
         if(terminals.find(stackTop)! = terminals.end()){
             //match
-            if(curToken.second == stackTop){
+            if(curToken.First == stackTop){
                 parseStack.pop();
-                node = buildASTnode(stackTop);//ing
+                node = buildAnalysisNode_terminal(curToken);
                 resultStack.push(node);
-                reductionResultStack();//ing
+                reductionResultStack();
             }
             else{//error detaction
                 std::cerr << "terminal Failed at token num " <<
                 << parsingTokenIndex <<" : ["<<
                 curToken.first<<", "<<curToken.second<<
                 " ]"<<std::endl;
-                break;
+                return false;
             }
             parsingTokenIndex++;
         //non_terminal
         } else if(non_terminals.find(stackTop) != non_terminals.end()){
             ll1TableEntry entryMap = (*LL1Table)[stackTop];
             //match
-            if(entryMap.find(curToken.second) != entryMap.end()){
+            if(entryMap.find(curToken.First) != entryMap.end()){
                 parseStack.pop();
-                for(const auto& symbol : entryMap[curToken.second]){
+                for(const auto& symbol : entryMap[curToken.First]){
                     parseStack.push(symbol);
                 }
-                std::pair<std::string,std::string> 
-                non_terminal_token(stackTop, "");//ing
-                resultStack.push(non_terminal_token);
+                node = buildAnalysisNode_non_terminal(stackTop,entryMap[curToken.First]);
+                resultStack.push(node);
             }
             else{//error detaction
                 std::cerr << "non_terminal Failed at token num " <<
