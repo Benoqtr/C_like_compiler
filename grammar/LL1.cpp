@@ -57,16 +57,29 @@ void LL1Constructor::genTable(const LL1grammarInfo& grammarInfo){
 }
 
 void LL1Constructor::parse(grammarInfo,tokens,LL1Table){
-
+    LL1Parser(grammarInfo,tokens,LL1Table);
+    ASTree = LL1Parser.getTree();
 }
 
-void LL1Constructor::genTree(stack){
+void LL1TableConstructor::isTerminal(const std::string& symbol){
+    if (grammarInfo.terminals.find(symbol) != grammarInfo.terminals.end()){
+        return true;
+    }
+    return false;
+}
 
+void LL1TableConstructor::haveEpision(const std::set<std::string>& set){
+    if (set.find("ε") != set.end()){
+        return true;
+    }
+    return false;
 }
 
 void LL1TableConstructor::calculateFirstSet(){
-    initNonterminalSet();
-    initTerminalSet();
+    //terminal add itself
+    for(const auto& terminal: grammarInfo.terminals)
+        firstSetsMap[terminal].insert(terminal);
+    //non_terminal circulation
     bool firstSetChanged = true;
     while(firstSetChanged){
         firstSetChanged = false;
@@ -80,13 +93,15 @@ void LL1TableConstructor::calculateFirstSet(){
                         firstSetChanged = true;
                     }
                     //if find ε, it is necessary to add next symbol's First set
-                    if(firstSetsMap[element].find("ε") != firstSetsMap[element].end()){
+                    if(!haveEpision(firstSetsMap[element])){
                         episionAll = false;
-                        break;
+                        break;//stop to add
                     }
                 }
-                if(episionAll)
+                if(episionAll){
                     firstSetsMap[productions.first].insert("ε");
+                    firstSetChanged = true;
+                }
             }
         }
     }
@@ -94,31 +109,33 @@ void LL1TableConstructor::calculateFirstSet(){
 
 void LL1TableConstructor::calculateFollowSet() {
     followSetsMap[startSymbol].insert("$");
-
     bool followSetChanged = true;
     while (followSetChanged) {
         followSetChanged = false;
         for (const auto& productions : *productionMap) {
+            //productions.first is A, which A→X1X2…Xn
             for (const auto& production : productions.second) {
-                for (const auto& element : production){
+                //production[i] is xi
+                for (std::size_t i = 0; i< production.size(); ++i){
                     const std::string& symbol = production[i];
 
-                    if (non_terminals.find(symbol) != non_terminals.end()) {
+                    if (!isTerminal(symbol)) {
+                        bool episionAll = true;
                         // Non-terminal symbol
                         // Update follow set using next symbols in the production
                         for (std::size_t j = i + 1; j < production.size(); ++j) {
-                            if (haveAddNewSymbol(followSetsMap[symbol], firstSetsMap[production[j]])) {
+                            if (tryAddNewSymbol(followSetsMap[symbol], firstSetsMap[production[j]])) {
                                 followSetChanged = true;
                             }
-
-                            if (firstSetsMap[production[j]].find("ε") == firstSetsMap[production[j]].end()) {
+                            if (!haveEpision(firstSetsMap[production[j]])) {
                                 // ε not in first set, stop updating follow set
+                                episionAll = false;
                                 break;
                             }
                         }
-
                         // If the last symbols in the production can derive ε, update follow set
-                        if (i == production.size() - 1 || haveAddNewSymbol(followSetsMap[symbol], followSetsMap[productions.first])) {
+                        if (episionAll) {
+                            tryAddNewSymbol(followSetsMap[symbol], firstSetsMap[productions.first]);
                             followSetChanged = true;
                         }
                     }
@@ -126,10 +143,6 @@ void LL1TableConstructor::calculateFollowSet() {
             }
         }
     }
-
-    // Now followSetsMap contains the final follow sets
-    // You may want to assign followSetsMap to your member variable
-    followSetsMap.swap(followSetsMap);
 }
 
 
@@ -150,7 +163,27 @@ bool LL1TableConstructor::tryAddNewSymbol(std::set<std::string>& dstSet,std::set
 }
 
 void LL1TableConstructor::constructLL1Table(){
+    // 步骤3：初始化LL(1)分析表
+    LL1Table = std::make_shared<LL1Table>();
 
+    // 步骤4：填充LL(1)分析表
+    for (const auto& nonTerminal : grammarInfo.getNonTerminals()) {
+        for (const auto& production : grammarInfo.getProductionsForNonTerminal(nonTerminal)) {
+            // 对于每个产生式 A -> alpha
+            // 对于First(alpha)中的每个终结符'a'
+            for (const auto& terminal : firstSetsMap[production]) {
+                // 在LL(1)分析表的M[A, a]中添加A -> alpha
+                LL1Table->addEntry(nonTerminal, terminal, production);
+            }
+
+            // 如果ε在First(alpha)中，对于Follow(A)中的每个元素'b'，在LL(1)分析表的M[A, b]中添加A -> alpha
+            if (haveEpsilon(firstSetsMap[production])) {
+                for (const auto& terminal : followSetsMap[nonTerminal]) {
+                    LL1Table->addEntry(nonTerminal, terminal, production);
+                }
+            }
+        }
+    }
 }
 
 void LL1Parser::reduceResultStack(){

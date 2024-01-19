@@ -23,6 +23,9 @@ using ll1tablePtr = std::shared_ptr<std::map<std::string,ll1TableEntry>>;
 //example StatementList: {ID,if,return,while,ε}
 using setsMap = std::map<std::string,std::set<std::string>>;
 
+//ASTRoot
+using ASTRoot = compile::ASTRoot;
+
 //struct to hold essencial info throughout the
 //grammar analysis
 //recive productionMapPtr
@@ -50,6 +53,8 @@ class LL1TableConstructor{
         setsMap followSetsMap;
         ll1tablePtr LL1Table;
         
+        bool isTerminal(const std::string& symbol);
+        bool haveEpision(const std::set<std::string>& set);
         void calculateFirstSet();
         void calculateFollowSet();
         void constructLL1Table();
@@ -89,15 +94,13 @@ class LL1Constructor{
 public:
     LL1Constructor(const LL1grammarInfo& grammarInfo,
     tokensPtr tokens):grammarInfo(grammarInfo),tokens(tokens){};
-    std::shared_ptr<ProgramAST> getASTree();
+    ASTRoot getASTree();
 private:
     std::shared_ptr<LL1grammarInfo> grammarInfo;
     tokensPtr tokens;
     ll1tablePtr LL1Table;
-    std::shared_ptr<ProgramAST> ASTree;
-    stack;
+    ASTRoot ASTree;
 
-    void genTree();
     void genTable();
     void parse();
 };

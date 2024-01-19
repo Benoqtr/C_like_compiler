@@ -41,7 +41,6 @@ private:
     void NFAConstruction(){};
     void DFAConstruction(){};
     void minimizeDFA(){};
-    void isMatched(){}
 }
 
 class regularEngine{
