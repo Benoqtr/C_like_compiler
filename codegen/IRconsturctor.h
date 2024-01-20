@@ -1,3 +1,7 @@
 namespace IR{
-    
+
+class IRmsg{
+
+}
+
 }

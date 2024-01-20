@@ -163,7 +163,6 @@ bool LL1TableConstructor::tryAddNewSymbol(std::set<std::string>& dstSet,std::set
 }
 
 void LL1TableConstructor::constructLL1Table(){
-    // 步骤3：初始化LL(1)分析表
     LL1Table = std::make_shared<LL1Table>();
 
     // 步骤4：填充LL(1)分析表

@@ -1,11 +1,117 @@
-/// BaseAST - Base class for all expression nodes.
-class BaseAST {
+#pragma once
+#include <queue>
+#include <string>
+#include <map>
+/// ExprAST - Base class for all expression nodes.
+class ExprAST {
 public:
-    std::string type;
-    std::string production;
   virtual ~ExprAST() = default;
 
   virtual Value *codegen() = 0;
+};
+
+/// DeclAST - basic compoment of program
+class DeclAST : public ExprAST {
+public:
+  virtual ~ExprAST() = default;
+
+  virtual Value *codegen() = 0;
+};
+
+/// Global Variable Declaration
+class GloVarDeclAst : public DeclAST {
+    std::string varType;
+    std::string name;
+public:
+    GloVarDeclAst(std::string varType,std::string name)
+    : varType(varType), name(name) {}
+    Value *codegen() override;
+};
+
+/// StatAST - basic compoment of function
+class StatAST : public ExprAST {
+public:
+  virtual ~ExprAST() = default;
+
+  virtual Value *codegen() = 0;
+};
+
+/// 1/5 StatAST: Expression
+class ExprStatAst : public StatAST {
+    std::string varType;
+    std::string name;
+public:
+    GloVarDeclAst(std::string varType,std::string name)
+    : varType(varType), name(name) {}
+    Value *codegen() override;
+};
+
+/// 2/5 StatAST: Selection
+class ExprStatAst : public StatAST {
+    std::string varType;
+    std::string name;
+public:
+    GloVarDeclAst(std::string varType,std::string name)
+    : varType(varType), name(name) {}
+    Value *codegen() override;
+};
+
+/// 3/5 StatAST: Iteration
+class ExprStatAst : public StatAST {
+    std::string varType;
+    std::string name;
+public:
+    GloVarDeclAst(std::string varType,std::string name)
+    : varType(varType), name(name) {}
+    Value *codegen() override;
+};
+
+/// 4/5 StatAST: Return
+class ExprStatAst : public StatAST {
+    std::string varType;
+    std::string name;
+public:
+    GloVarDeclAst(std::string varType,std::string name)
+    : varType(varType), name(name) {}
+    Value *codegen() override;
+};
+
+/// 5/5 StatAST: Invoke
+class ExprStatAst : public StatAST {
+    std::string varType;
+    std::string name;
+public:
+    GloVarDeclAst(std::string varType,std::string name)
+    : varType(varType), name(name) {}
+    Value *codegen() override;
+};
+
+/// Function Declaration
+class FunctionAst : public DeclAST {
+    std::string retType;
+    std::string name;
+    std::queue<map<std::string,std::string>> ParameterList;
+    std::queue<StatAST> statList;
+public:
+    FunctionAst(std::string retType,
+    std::string name,
+    std::queue<map<std::string,std::string>> ParameterList,
+    std::queue<StatAST> statList)
+    : retType(retType), name(name),
+    ParameterList(ParameterList), statList(statList){}
+    Value *codegen() override;
+};
+
+/// ProgramAST - Toppest ASTnode only contains DeclAST
+class ProgramAST : public ExprAST {
+  std::queue<DeclAST> declList
+
+public:
+  ProgramAST(DeclAST declAST){
+    declList.push(declAST);
+  }
+
+  Value *codegen() override;
 };
 
 /// NumberExprAST - Expression class for numeric literals like "1.0".

@@ -1,5 +1,16 @@
 namespace AST{
 
+//This help to use a string to invoke different ASTNode constuctor
+std::unique_ptr<BaseAST> newASTNode(const std::string& type,
+    const std::vector<std::string>& production){
+        switch(type) {
+            case BaseAST:
+                return std::make_unique<BaseAST>(type,production);
+            default:
+                return std::make_unique<BaseAST>(type,production);
+        }
+    }
+
 // BaseAST - Base class for all expression nodes.
 class BaseAST {
 public:
