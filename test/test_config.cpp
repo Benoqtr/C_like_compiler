@@ -1,7 +1,13 @@
-#include "config/config.cpp"
+#include "config.h"
+#include <iostream>
+
+using config::Config;
+
+#define rePath R"(D:\GithubProjects\C_like_compiler\config\regular.br)"
+#define gmPath R"(D:\GithubProjects\C_like_compiler\config\grammar.bg)"
 
 int main(){
-    Config config("../config/regular.br","../config/grammar.bg");
+    Config config(rePath,gmPath);
     
     for (const auto& pair : *(config.regularExpressions)) {
         std::cout << pair.first << ": " << pair.second << std::endl;

@@ -1,12 +1,12 @@
 Program -> DeclarationList
-DeclarationList -> Declaration DeclarationList | ε
+DeclarationList -> Declaration DeclarationList | EPSION
 Declaration -> VariableDeclaration | FunctionDeclaration
 VariableDeclaration -> int ID ;
 FunctionDeclaration -> int ID ( ParameterList ) CompoundStatement ;
-ParameterList -> Parameter ParameterList | ε
+ParameterList -> Parameter ParameterList | EPSION
 Parameter -> int ID ,
 CompoundStatement -> { StatementList }
-StatementList -> Statement StatementList | ε
+StatementList -> Statement StatementList | EPSION
 Statement -> ExpressionStatement | SelectionStatement | IterationStatement | ReturnStatement | InvokeStatement
 ExpressionStatement -> ID = Expression ;
 SelectionStatement -> if ( Expression ) CompoundStatement else CompoundStatement ;

@@ -1,12 +1,15 @@
+#include "config.h"
+
 namespace lexical{
 
-using tokensPtr = compile::tokensPtr;
+using tokensPtr = std::shared_ptr<std::vector<
+    std::pair<std::string,std::string>>>;
 
-using compileConfig = compile::compileConfig;
+using config::Config;
 
 class Tokenizer {
 public:
-    Tokenizer(compileConfig config,
+    Tokenizer(Config config,
     const std::string& fileName);
     tokensPtr getTokens();
 

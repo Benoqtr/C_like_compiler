@@ -9,7 +9,7 @@ std::unique_ptr<BaseAST> newASTNode(const std::string& type,
             default:
                 return std::make_unique<BaseAST>(type,production);
         }
-    }
+}
 
 // BaseAST - Base class for all expression nodes.
 class BaseAST {

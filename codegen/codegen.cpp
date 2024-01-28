@@ -20,7 +20,7 @@ ProgramAST::codegen(){
 }
 
 DeclarationListAST::codegen(){
-    //DeclarationList -> ε
+    //DeclarationList -> EPSION
     // if(childAST[0])
     //     return
     //
@@ -79,6 +79,40 @@ FunctionDeclaration::codegen(){
     // llvm::Value* loadedGlobalVar = builder.CreateLoad(globalVar);
     // builder.CreateRet(loadedGlobalVar);
 }
+
+// // 定义条件语句的函数
+// Function* createConditionalFunction() {
+//     // 函数签名：int conditionalFunction(int)
+//     FunctionType* FuncType = FunctionType::get(Type::getInt32Ty(TheContext), {Type::getInt32Ty(TheContext)}, false);
+//     Function* Func = Function::Create(FuncType, Function::ExternalLinkage, "conditionalFunction", TheModule);
+
+//     // 创建函数的基本块
+//     BasicBlock* EntryBB = BasicBlock::Create(TheContext, "entry", Func);
+//     Builder.SetInsertPoint(EntryBB);
+
+//     // 函数参数
+//     Argument* ArgX = &*Func->arg_begin();
+//     ArgX->setName("x");
+
+//     // 在条件块内部定义变量
+//     Value* InternalVar = Builder.CreateAlloca(Type::getInt32Ty(TheContext), nullptr, "internalVar");
+
+//     // 条件语句
+//     Value* Condition = Builder.CreateICmpSGT(ArgX, ConstantInt::get(TheContext, APInt(32, 0)), "compare");
+//     Builder.CreateCondBr(Condition, EntryBB, EntryBB);
+
+//     // 在条件块中使用变量
+//     Builder.SetInsertPoint(EntryBB);
+//     Builder.CreateStore(ConstantInt::get(TheContext, APInt(32, 42)), InternalVar);
+
+//     // 将条件块内部定义的变量赋值给外部变量
+//     ExternalVar = InternalVar;
+
+//     // 返回值
+//     Builder.CreateRet(ExternalVar);
+
+//     return Func;
+// }
 
 // ParameterList
 // Parameter

@@ -69,7 +69,7 @@ void LL1TableConstructor::isTerminal(const std::string& symbol){
 }
 
 void LL1TableConstructor::haveEpision(const std::set<std::string>& set){
-    if (set.find("ε") != set.end()){
+    if (set.find("EPSION") != set.end()){
         return true;
     }
     return false;
@@ -92,14 +92,14 @@ void LL1TableConstructor::calculateFirstSet(){
                     if(haveAddNewSymbol(firstSetsMap[productions.first],firstSetsMap[element])){
                         firstSetChanged = true;
                     }
-                    //if find ε, it is necessary to add next symbol's First set
+                    //if find EPSION, it is necessary to add next symbol's First set
                     if(!haveEpision(firstSetsMap[element])){
                         episionAll = false;
                         break;//stop to add
                     }
                 }
                 if(episionAll){
-                    firstSetsMap[productions.first].insert("ε");
+                    firstSetsMap[productions.first].insert("EPSION");
                     firstSetChanged = true;
                 }
             }
@@ -128,12 +128,12 @@ void LL1TableConstructor::calculateFollowSet() {
                                 followSetChanged = true;
                             }
                             if (!haveEpision(firstSetsMap[production[j]])) {
-                                // ε not in first set, stop updating follow set
+                                // EPSION not in first set, stop updating follow set
                                 episionAll = false;
                                 break;
                             }
                         }
-                        // If the last symbols in the production can derive ε, update follow set
+                        // If the last symbols in the production can derive EPSION, update follow set
                         if (episionAll) {
                             tryAddNewSymbol(followSetsMap[symbol], firstSetsMap[productions.first]);
                             followSetChanged = true;
@@ -146,14 +146,14 @@ void LL1TableConstructor::calculateFollowSet() {
 }
 
 
-// add a set to another,and ε will not be added 
+// add a set to another,and EPSION will not be added 
 bool LL1TableConstructor::tryAddNewSymbol(std::set<std::string>& dstSet,std::set<std::string>& srcSet){
     //differenceSet{} = srcSet{} - dstSet{}
     std::set<std::string> differenceSet;
     std::set_difference(srcSet.begin(), srcSet.end(), dstSet.begin(), dstSet.end(),
                         std::inserter(differenceSet, differenceSet.begin()));
 
-    differenceSet.erase("ε");
+    differenceSet.erase("EPSION");
     if (!differenceSet.empty()) {//add new
         dstSet.insert(differenceSet.begin(), differenceSet.end());
         return true;
@@ -175,7 +175,7 @@ void LL1TableConstructor::constructLL1Table(){
                 LL1Table->addEntry(nonTerminal, terminal, production);
             }
 
-            // 如果ε在First(alpha)中，对于Follow(A)中的每个元素'b'，在LL(1)分析表的M[A, b]中添加A -> alpha
+            // 如果EPSION在First(alpha)中，对于Follow(A)中的每个元素'b'，在LL(1)分析表的M[A, b]中添加A -> alpha
             if (haveEpsilon(firstSetsMap[production])) {
                 for (const auto& terminal : followSetsMap[nonTerminal]) {
                     LL1Table->addEntry(nonTerminal, terminal, production);

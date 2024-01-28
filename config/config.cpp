@@ -9,21 +9,21 @@
 
 using namespace config;
 
-Config::Config(const std::string& rePath,const std::string& gmPath){
-    if(!Initres(rePath)){
+Config::Config(const std::string& regularPath,const std::string& grammarPath){
+    if(!Initres(regularPath)){
         std::cerr << "Failed to Initres." << std::endl;
     }
-    if(!Initgms(gmPath)){
+    if(!Initgms(grammarPath)){
         std::cerr << "Failed to Initgms." << std::endl;
     }
 }
 
-bool Config::Initres(const std::string& rePath){
-    std::ifstream file(rePath);
+bool Config::Initres(const std::string& regularPath){
+    std::ifstream file(regularPath);
 
     if (!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl 
-        << rePath << std::endl;
+        << regularPath << std::endl;
         return false;
     }
 
@@ -46,12 +46,12 @@ bool Config::Initres(const std::string& rePath){
     return true;
 }
 
-bool Config::Initgms(const std::string& gmPath){
-    std::ifstream file(gmPath);
+bool Config::Initgms(const std::string& grammarPath){
+    std::ifstream file(grammarPath);
 
     if (!file.is_open()) {
         std::cerr << "Failed to open the file." << std::endl 
-        << gmPath << std::endl;
+        << grammarPath << std::endl;
         return false;
     }
 

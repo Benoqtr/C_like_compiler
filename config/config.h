@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <string>
 
 namespace config{
 
@@ -21,10 +22,10 @@ public:
     //regular grammars
     productionMapPtr regularGrammars;
 
-    Config(const std::string& rePath,const std::string& gmPath);
+    Config(const std::string& regularPath,const std::string& grammarPath);
 private:
-    bool Initres(const std::string& rePath);
-    bool Initgms(const std::string& gmPath);
+    bool Initres(const std::string& regularPath);
+    bool Initgms(const std::string& grammarPath);
 };
 
 }

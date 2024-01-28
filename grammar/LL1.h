@@ -29,7 +29,7 @@ using ll1TableEntry = std::map<std::string,productionContext>;
 using ll1tablePtr = std::shared_ptr<std::map<std::string,ll1TableEntry>>;
 
 //map string to a set of strings
-//example StatementList: {ID,if,return,while,ε}
+//example StatementList: {ID,if,return,while,EPSION}
 using setsMap = std::map<std::string,std::set<std::string>>;
 
 //ASTRoot

@@ -1,3 +1,4 @@
+#include "tokenizer.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -8,7 +9,7 @@ namespace lexical{
 
 
 // Constructor takes the input file name
-Tokenizer::Tokenizer(compileConfig config,
+Tokenizer::Tokenizer(Config config,
 const std::string& fileName) {
     std::ifstream inputFile(fileName);
     if (inputFile.is_open()) {
