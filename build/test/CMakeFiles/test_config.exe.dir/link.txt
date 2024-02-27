@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\test_config.exe.dir/objects.a
-C:\complier\mingw64\bin\ar.exe qc CMakeFiles\test_config.exe.dir/objects.a @CMakeFiles\test_config.exe.dir\objects1.rsp
-C:\complier\mingw64\bin\g++.exe -g -Wl,--dependency-file,CMakeFiles\test_config.exe.dir\link.d -Wl,--whole-archive CMakeFiles\test_config.exe.dir/objects.a -Wl,--no-whole-archive -o test_config.exe.exe -Wl,--out-implib,libtest_config.exe.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\test_config.exe.dir\linkLibs.rsp
