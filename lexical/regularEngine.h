@@ -1,4 +1,10 @@
+#pragma once
+#include <memory>
+
 namespace regularEngine{
+
+//map type to its regular Expression
+using reExpressionsMapPtr = std::shared_ptr<std::map<std::string,std::string>>;
 
 class DFAnode {
 public:
@@ -18,7 +24,8 @@ public:
 
 class ThompsonConstruction {//construct NFA
 public:
-    std::vector<DFAnode> buildNFA(std::string postfixRegex);
+    ThompsonConstruction() = default;
+    std::vector<DFAnode> buildNFA(const std::string& postfixRegex);
 
 private:
     std::vector<DFAnode> states;
@@ -34,10 +41,13 @@ private:
 
 class DFA{
 public:
-    DFA(std::string postfixRegex)
-    std::string ismatch(std::string raw_token)
-private:
+    std::string postfixRegex;
     std::vector<DFAnode> nodes;
+
+    DFA(const std::string& postfixRegex):
+    postfixRegex(postfixRegex){}
+    std::string ismatch(std::string raw_token);
+private:
     void NFAConstruction(){};
     void DFAConstruction(){};
     void minimizeDFA(){};
@@ -45,16 +55,13 @@ private:
 
 class regularEngine{
 public:
-    regularEngine(const std::string& fileName)
-    std::string getType(std::string token)
+    regularEngine(const reExpressionsMapPtr& REConfig);
+    std::string getType(const std::string& raw_token);
 private:
-    std::unique_ptr<map<std::string, std::string>> typeAndExpr;
-    std::unique_ptr<map<std::string, std::shared_ptr<DFA>>> typeAndDFA;
-private:
-    std::unique_ptr<std::map<std::string, std::string>> getRegularInfo(const std::string& fileName)
-    void infixToPostExpr(){};
-    std::shared_ptr<DFA> getDFA(std::string regularExpr)
-    bool is_matched(std::string token,std::shared_ptr<DFA> DFA)
+    std::shared_ptr<map<std::string, std::shared_ptr<DFA>>> typeAndDFA;
+    std::string infixToPostExpr(const std::string& regularExpr);
+    std::string expressionExpand(const std::string& regularExpr);
+    std::shared_ptr<DFA> getDFA(const std::string& regularExpr);
 };
 
 }

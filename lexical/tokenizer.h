@@ -1,26 +1,32 @@
+#pragma once
 #include "config.h"
+#include <sstream>
+#include <queue>
 
 namespace lexical{
 
 using tokensPtr = std::shared_ptr<std::vector<
     std::pair<std::string,std::string>>>;
 
+using rawTokenPtr = std::shared_ptr<std::queue<std::string>>;
+
 using config::Config;
 
 class Tokenizer {
 public:
-    Tokenizer(Config config,
-    const std::string& fileName);
+    Tokenizer(const Config& config, const std::string& filePath);
+    rawTokenPtr getRawToken();
     tokensPtr getTokens();
 
 private:
-    compileConfig config;
+    bool gotRawToken = false;
+    rawTokenPtr raw_tokens; //split words
+    Config config;
     std::string sourceFilePath;
-    std::queue<std::string> raw_tokens;
     std::vector<std::pair<std::string, std::string>> tokens;
     std::stringstream program;
 
-    void tokenize();
+    bool splitToken();
     void match();
 };
 

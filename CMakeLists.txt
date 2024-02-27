@@ -6,4 +6,6 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_subdirectory(config)
 
+add_subdirectory(lexical)
+
 add_subdirectory(test)
